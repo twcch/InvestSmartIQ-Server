@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tw.cchs.investsmartiqserver.core.util.Encryption;
+import tw.cchs.investsmartiqserver.web.user.constant.Role;
 import tw.cchs.investsmartiqserver.web.user.constant.Status;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
@@ -66,6 +67,7 @@ public class UserServiceImpl implements UserService {
         user.setGender(userRegisterRequest.getGender());
         user.setStatus(Status.DISABLE);
         user.setDrop(null);
+        user.setChangeId(Role.ADMIN.getValue());
 
         Date now = new Date();
         user.setCreatedDate(now);

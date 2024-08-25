@@ -39,6 +39,9 @@ public class User {
     @Column(name = "drop")
     private Drop drop;
 
+    @Column(name = "changeId")
+    private Integer changeId;
+
     @Column(name = "created_date")
     private Date createdDate;
 
@@ -103,6 +106,14 @@ public class User {
 
     public void setDrop(Drop drop) {
         this.drop = drop;
+    }
+
+    public Integer getChangeId() {
+        return changeId;
+    }
+
+    public void setChangeId(Integer changeId) {
+        this.changeId = changeId;
     }
 
     public Date getCreatedDate() {

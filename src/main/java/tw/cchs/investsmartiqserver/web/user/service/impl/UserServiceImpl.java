@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         user.setGender(userRegisterRequest.getGender());
         user.setStatus(Status.DISABLE);
         user.setDrop(null);
-        user.setChangeId(Role.ADMIN.getValue());
+        user.setChangeId(Role.SYSTEM.getValue());
 
         Date now = new Date();
         user.setCreatedDate(now);

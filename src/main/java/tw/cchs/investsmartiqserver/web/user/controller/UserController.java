@@ -4,9 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
@@ -33,6 +31,15 @@ public class UserController {
     public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
 
         User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
+
+        User user = userService.findByUserId(userId);
 
         return ResponseEntity.status(HttpStatus.OK).body(user);
 

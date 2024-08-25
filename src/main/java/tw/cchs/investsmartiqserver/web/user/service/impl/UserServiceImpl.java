@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import tw.cchs.investsmartiqserver.core.util.Encryption;
 import tw.cchs.investsmartiqserver.web.user.constant.Status;
+import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 import tw.cchs.investsmartiqserver.web.user.repository.UserRepository;
@@ -39,6 +40,19 @@ public class UserServiceImpl implements UserService {
         userRegisterRequest.setPassword(hashedPassword);
 
         return createUser(userRegisterRequest);
+
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+
+        User user = userRepository.findByUsername(userLoginRequest.getUsername());
+
+        validateUsernameNotExists(user);
+
+        validateUserPassword(user, userLoginRequest.getPassword());
+
+        return user;
 
     }
 
@@ -116,6 +130,18 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             log.warn("該 email {} 尚未註冊", user.getEmail());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Email not registered.");
+        }
+
+    }
+
+    private void validateUserPassword(User user, String password) {
+
+        Encryption encryption = new Encryption();
+        String hashedPassword = encryption.getHashPassword(password);
+
+        if (!user.getPassword().equals(hashedPassword)) {
+            log.warn("該 username {} 的密碼不正確", user.getUsername());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid password.");
         }
 
     }

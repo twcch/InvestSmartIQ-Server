@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 import tw.cchs.investsmartiqserver.web.user.service.UserService;
@@ -23,6 +24,15 @@ public class UserController {
         Integer userId = userService.register(userRegisterRequest);
 
         User user = userService.findByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+
+    }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+
+        User user = userService.login(userLoginRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(user);
 

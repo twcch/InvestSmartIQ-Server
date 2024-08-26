@@ -3,6 +3,9 @@ package tw.cchs.investsmartiqserver.web.user.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,12 +13,14 @@ import tw.cchs.investsmartiqserver.core.util.Encryption;
 import tw.cchs.investsmartiqserver.web.user.constant.Role;
 import tw.cchs.investsmartiqserver.web.user.constant.Status;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
+import tw.cchs.investsmartiqserver.web.user.dto.UserQueryParams;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 import tw.cchs.investsmartiqserver.web.user.repository.UserRepository;
 import tw.cchs.investsmartiqserver.web.user.service.UserService;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -80,6 +85,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findAll(UserQueryParams userQueryParams) {
+
+        Pageable pageable = PageRequest.of(
+                userQueryParams.getOffset(),
+                userQueryParams.getLimit(),
+                Sort.by("createdDate").ascending()
+        );
+
+        return userRepository.findAll(pageable).getContent();
+
+    }
+
+    @Override
     public User findByUserId(Integer userId) {
 
         return userRepository.findByUserId(userId);
@@ -97,6 +115,13 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) {
 
         return userRepository.findByEmail(email);
+
+    }
+
+    @Override
+    public Long count() {
+
+        return userRepository.count();
 
     }
 

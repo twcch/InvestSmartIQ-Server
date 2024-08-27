@@ -25,4 +25,6 @@ public interface UserService {
 
     public Long count();
 
+    public void deleteUserById(Integer userId);
+
 }

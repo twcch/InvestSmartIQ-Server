@@ -125,6 +125,13 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void deleteUserById(Integer userId) {
+
+        userRepository.deleteById(userId);
+
+    }
+
     private void validateUsernameExists(User user) {
 
         if (user != null) {

@@ -15,12 +15,14 @@ import tw.cchs.investsmartiqserver.web.user.constant.Status;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserQueryParams;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
+import tw.cchs.investsmartiqserver.web.user.dto.UserUpdateRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 import tw.cchs.investsmartiqserver.web.user.repository.UserRepository;
 import tw.cchs.investsmartiqserver.web.user.service.UserService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,8 +43,7 @@ public class UserServiceImpl implements UserService {
             validateEmailExists(existingEmail);
         }
 
-        Encryption encryption = new Encryption();
-        String hashedPassword = encryption.getHashPassword(userRegisterRequest.getPassword());
+        String hashedPassword = Encryption.getHashPassword(userRegisterRequest.getPassword());
         userRegisterRequest.setPassword(hashedPassword);
 
         return createUser(userRegisterRequest);
@@ -126,9 +127,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUserById(Integer userId, UserUpdateRequest userUpdateRequest) {
+
+        User user = userRepository.findByUserId(userId);
+
+        validateUserIdNotExists(user);
+
+        Optional.ofNullable(userUpdateRequest.getPassword()).ifPresent(password -> user.setPassword(Encryption.getHashPassword(password)));
+
+        Optional.ofNullable(userUpdateRequest.getEmail()).ifPresent(email -> {
+            validateEmailExists(user);
+            user.setEmail(email);
+        });
+
+        Optional.ofNullable(userUpdateRequest.getGender()).ifPresent(user::setGender);
+
+        Optional.ofNullable(userUpdateRequest.getChangeId()).ifPresent(user::setChangeId);
+
+        user.setLastModifiedDate(new Date());
+
+        userRepository.save(user);
+
+    }
+
+    @Override
     public void deleteUserById(Integer userId) {
 
         userRepository.deleteById(userId);
+
+    }
+
+    private void validateUserIdNotExists(User user) {
+
+        if (user == null) {
+            log.warn("該 user id {} 不存在", user.getUserId());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Username not registered.");
+        }
 
     }
 
@@ -170,8 +204,7 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserPassword(User user, String password) {
 
-        Encryption encryption = new Encryption();
-        String hashedPassword = encryption.getHashPassword(password);
+        String hashedPassword = Encryption.getHashPassword(password);
 
         if (!user.getPassword().equals(hashedPassword)) {
             log.warn("該 username {} 的密碼不正確", user.getUsername());

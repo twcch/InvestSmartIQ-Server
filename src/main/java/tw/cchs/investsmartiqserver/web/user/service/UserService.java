@@ -3,6 +3,7 @@ package tw.cchs.investsmartiqserver.web.user.service;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserQueryParams;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
+import tw.cchs.investsmartiqserver.web.user.dto.UserUpdateRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public interface UserService {
     public User findByEmail(String email);
 
     public Long count();
+
+    public void updateUserById(Integer userId, UserUpdateRequest userUpdateRequest);
 
     public void deleteUserById(Integer userId);
 

@@ -11,6 +11,7 @@ import tw.cchs.investsmartiqserver.core.util.Page;
 import tw.cchs.investsmartiqserver.web.user.dto.UserLoginRequest;
 import tw.cchs.investsmartiqserver.web.user.dto.UserQueryParams;
 import tw.cchs.investsmartiqserver.web.user.dto.UserRegisterRequest;
+import tw.cchs.investsmartiqserver.web.user.dto.UserUpdateRequest;
 import tw.cchs.investsmartiqserver.web.user.entity.User;
 import tw.cchs.investsmartiqserver.web.user.service.UserService;
 
@@ -75,6 +76,24 @@ public class UserController {
         page.setTotal(total);
 
         return ResponseEntity.status(HttpStatus.OK).body(page);
+
+    }
+
+    @PutMapping("/users/{userId}")
+    public ResponseEntity<User> updateUserById(@PathVariable Integer userId,
+                                               @RequestBody UserUpdateRequest userUpdateRequest) {
+
+        User user = userService.findByUserId(userId);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        userService.updateUserById(userId, userUpdateRequest);
+
+        User updatedUser = userService.findByUserId(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
 
     }
 
